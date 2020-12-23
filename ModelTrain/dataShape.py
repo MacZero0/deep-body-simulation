@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-/*
- * @Author: Mac
- * @Email: zhuxin@stu.scu.edu.cn
- * @Date: 2020-12-21 18:06:00
- * @Last Modified by: Mac
- * @Last Modified time: 2020-12-21 18:08:10
- * @Description: Description
- */
+# /*
+#  * @Author: Mac
+#  * @Email: zhuxin@stu.scu.edu.cn
+#  * @Date: 2020-12-21 18:06:00
+#  * @Last Modified by: Mac
+#  * @Last Modified time: 2020-12-21 18:08:10
+#  * @Description: Description
+#  */
 
 
 import numpy as np

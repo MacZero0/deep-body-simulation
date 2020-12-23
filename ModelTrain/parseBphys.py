@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
-# @Time    :   2020/12/21 17:51:50
-# @FileName:   parseBphys.py
-# @Author  :   MacZero0
-# @Software:   VSCode
+# /*
+#  * @Author: Mac
+#  * @Email: zhuxin@stu.scu.edu.cn
+#  * @Date: 2020-12-23 10:42:42
+#  * @Last Modified by:   Mac
+#  * @Last Modified time: 2020-12-23 10:42:42
+#  * @Description: Description
+#  */
+
 
 import struct
 import os

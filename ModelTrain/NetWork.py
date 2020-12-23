@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-/*
- * @Author: Mac
- * @Email: zhuxin@stu.scu.edu.cn
- * @Date: 2020-12-21 18:20:03
- * @Last Modified by:   Mac
- * @Last Modified time: 2020-12-21 18:20:03
- * @Description: Description
- */
+# /*
+#  * @Author: Mac
+#  * @Email: zhuxin@stu.scu.edu.cn
+#  * @Date: 2020-12-21 18:20:03
+#  * @Last Modified by:   Mac
+#  * @Last Modified time: 2020-12-21 18:20:03
+#  * @Description: Description
+#  */
 
 import torch
 import torch.nn as nn
