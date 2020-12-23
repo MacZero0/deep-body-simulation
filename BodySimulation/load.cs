@@ -1,12 +1,3 @@
-/*
- * @Author: Mac
- * @Email: zhuxin@stu.scu.edu.cn
- * @Date: 2020-12-21 18:21:05
- * @Last Modified by:   Mac
- * @Last Modified time: 2020-12-21 18:21:05
- * @Description: Description
- */
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -96,10 +87,14 @@ public class TestLoad
     public ModelMatsEigen modelMatsEigen = new ModelMatsEigen();
     public TestLoad()
     {
+        // data_json_path = "D:/project/Unity Project/FlagSim/Assets/Datas/data_json.json";
+        // model_json_path = "D:/project/Unity Project/FlagSim/Assets/Datas/model_json.json"; 
         TextAsset dataAsset = Resources.Load<TextAsset>("data_json");
         dataMats = JsonConvert.DeserializeObject<DataMats>(dataAsset.text);
         TextAsset modelAsset = Resources.Load<TextAsset>("model_json");
         modelMats = JsonConvert.DeserializeObject<ModelMats>(modelAsset.text);
+        Debug.Log(dataMats);
+        Debug.Log(modelMats);
 
         InitEigenMats();
         SetEigenMatsValues();

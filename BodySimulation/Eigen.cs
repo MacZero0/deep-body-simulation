@@ -1,14 +1,4 @@
-﻿/*
- * @Author: Mac
- * @Email: zhuxin@stu.scu.edu.cn
- * @Date: 2020-12-21 18:20:50
- * @Last Modified by:   Mac
- * @Last Modified time: 2020-12-21 18:20:50
- * @Description: Description
- */
-
-
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 
 //Eigen Plugin

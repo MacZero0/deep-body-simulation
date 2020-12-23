@@ -1,12 +1,3 @@
-/*
- * @Author: Mac
- * @Email: zhuxin@stu.scu.edu.cn
- * @Date: 2020-12-21 18:21:52
- * @Last Modified by:   Mac
- * @Last Modified time: 2020-12-21 18:21:52
- * @Description: Description
- */
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,9 +10,10 @@ public class modelSim : MonoBehaviour
 {
     const int width = 43;
     const int height = 22;
+    int cnt = 0;
     int vertexCnt;
     int triangleCnt;
-    string path = "/home/mac/project/projectCopy/DeepCloth/Test project/model_info.txt";
+    string path = "D:/project/Unity Project/FlagSim/Assets/Datas/model.txt";
     int parseCnt = 0;
     List<float> vertexData = new List<float>();
     List<int> triangleData = new List<int>();
@@ -57,32 +49,69 @@ public class modelSim : MonoBehaviour
     float [] mathTempArray = new float[2838];
     Matrix inputEigen = new Matrix(1, 258, "inputEigen");
     Matrix productEigen = new Matrix(1, 1, "productEigen");
-    // Start is called before the first frame update
-    void Start()
+    
+    void Awake()
     {
         // Selection.activeGameObject = GameObject.Find("sim_model");
         // DestroyImmediate(Selection.activeGameObject);
-        Material material = Resources.Load("Custom_NewSurfaceShader", typeof(Material)) as Material;
-        mesh = gameObject.AddComponent<MeshFilter>().mesh;
-        MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-        meshRenderer.material = material;
+        // Material material = Resources.Load("Custom_NewSurfaceShader", typeof(Material)) as Material;
+        // mesh = gameObject.AddComponent<MeshFilter>().mesh;
+        MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
         StreamReader reader = new StreamReader(path);
-        string[] data_lines = File.ReadAllLines(path);
+        string[] data_lines = File.ReadAllLines(@path);
         ParseData(data_lines);
+        mesh = GetComponent<MeshFilter>().mesh;
+        Material material = Resources.Load("Custom_NewSurfaceShader", typeof(Material)) as Material;
+        meshRenderer.material = material;
         mesh.vertices = GenerateVertices();
         mesh.triangles = GenerateTriangles();  
         mesh.normals = GenerateNormals();
         Debug.Log("mesh created");  
-        TestLoad testload = new TestLoad();
+        
         // Debug.Log(testload.dataMats.U[127, 11]);
         // Debug.Log(testload.modelMats.fc9_bias[3]);
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        TestLoad testload = new TestLoad();
         dataMats = testload.dataMats;
         modelMats = testload.modelMats;
 
         dataMatsEigen = testload.dataMatsEigen;
         modelMatsEigen = testload.modelMatsEigen;
-        // Forward();
+        Forward();
         test();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        // Vector3[] vertices = mesh.vertices;
+        // for (var i = 0; i < vertexCnt; i++)
+        // {
+        //     vertices[i] += Vector3.up * Time.deltaTime;
+        // }
+
+        // // assign the local vertices array into the vertices array of the Mesh.
+        // mesh.vertices = vertices;
+        // mesh.RecalculateBounds();
+        MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+        Material material = Resources.Load("Custom_NewSurfaceShader", typeof(Material)) as Material;
+       
+        if (cnt % 6 == 0)
+        {
+            ComputePipelineEigen(cnt);
+            // meshRenderer = mesh.material; 
+            // ComputePipelineEigen(cnt);
+            // Debug.Log("output: ");
+            // Debug.Log(string.Join(",", Zcorrection));
+            // Debug.Log("cnt: " + cnt);
+            meshRenderer.material = material;
+        }
+        cnt ++;
+
     }
 
     void ParseData(string [] data_lines)
@@ -110,9 +139,20 @@ public class modelSim : MonoBehaviour
     {
         //generate two triangles per vertex except the last column and last row
         int[] triangles = triangleData.ToArray();
+        Debug.Log("the triangles length is :" + triangles.Length);
         return triangles;
     }
  
+    
+    // private List<Vertor3> GenerateVertices1()
+    // {
+    //     List<Vector3> _vertices = new List<Verctor3>(1024)
+    //     for(int outerCnt = 0; outerCnt < vertexCnt; outerCnt++)
+    //     {
+    //         _vertices = 
+    //     }
+    // }
+
     private Vector3[] GenerateVertices()
     {
         Vector3[] vertices = new Vector3[vertexCnt];
@@ -128,7 +168,7 @@ public class modelSim : MonoBehaviour
         //         vertices[y * width + x] = new Vector3(x / (float)width, y / (float) height);
         //     }
         // }
-
+        Debug.Log("the vertices length is : " + vertices.Length);
         return vertices;
     }
 
@@ -173,11 +213,14 @@ public class modelSim : MonoBehaviour
         ComputeInitModel(cnt);
         Array.Copy(initResult, 0, Zpred, 0, 128);
 
-        // Yt[1] = 6000 + UnityEngine.Random.Range(-1000, 1000);
+        // // Yt[1] = 6000 + UnityEngine.Random.Range(-1000, 1000);
         Yt[1] = windStrength + UnityEngine.Random.Range(-1000, 1000);
         Yt[1] = Mathf.Clamp(Yt[1], 1000, 10000);
         // Yt[0] = 0.006f + UnityEngine.Random.Range(-2, 2) * (Mathf.PI / 18f);
         Yt[0] = Mathf.Clamp(windRot, -Mathf.PI / 2f, Mathf.PI / 2f);
+
+        // Yt[1] = windStrength;
+        // Yt[0] = windRot;
 
 
 
@@ -247,30 +290,7 @@ public class modelSim : MonoBehaviour
 
     } 
 
-    int cnt = 0;
-    // Update is called once per frame
-    void Update()
-    {
-        // Vector3[] vertices = mesh.vertices;
-        // for (var i = 0; i < vertexCnt; i++)
-        // {
-        //     vertices[i] += Vector3.up * Time.deltaTime;
-        // }
 
-        // // assign the local vertices array into the vertices array of the Mesh.
-        // mesh.vertices = vertices;
-        // mesh.RecalculateBounds();   
-        if (cnt % 6 == 0)
-        {
-            // ComputePipeline(cnt);
-            ComputePipelineEigen(cnt);
-            // Debug.Log("output: ");
-            // Debug.Log(string.Join(",", Zcorrection));
-            // Debug.Log("cnt: " + cnt);
-        }
-        cnt ++;
-
-    }
 
 
     void Forward()
@@ -620,7 +640,6 @@ public class modelSim : MonoBehaviour
 
             /*
             During each loop, matrix multiplication is computed firstly,
-
             i in outer loop is the index of weight's column number,
             j in inner loop is the index of X's column number
             */
@@ -659,7 +678,7 @@ public class modelSim : MonoBehaviour
         
 
         // assign the local vertices array into the vertices array of the Mesh.
-        mesh.vertices = vertices;
+        mesh.SetVertices(vertices);
 
         mesh.RecalculateBounds();
     }
@@ -675,7 +694,7 @@ public class modelSim : MonoBehaviour
         
 
         // assign the local vertices array into the vertices array of the Mesh.
-        mesh.vertices = vertices;
+        mesh.SetVertices(vertices);
         mesh.RecalculateBounds();        
     }
 
@@ -693,7 +712,7 @@ public class modelSim : MonoBehaviour
         // Profiler.EndSample();
 
         // assign the local vertices array into the vertices array of the Mesh.
-        mesh.normals = normals;
+        mesh.SetNormals(normals);
         mesh.RecalculateBounds();
     }
 
@@ -708,7 +727,7 @@ public class modelSim : MonoBehaviour
         // Profiler.EndSample();
 
         // assign the local vertices array into the vertices array of the Mesh.
-        mesh.normals = normals;
+        mesh.SetNormals(normals);
         mesh.RecalculateBounds();
     }
 
@@ -744,8 +763,10 @@ public class modelSim : MonoBehaviour
 
     void test()
     {
-        float [] test1 = new float[2]{1,5};
-        float [] test2 = new float[2]{6,9};
+        // float [] test1 = new float[2]{1,5};
+        // float [] test2 = new float[2]{6,9};
+        float [] test1 = new float[2]{3,3};
+        float [] test2 = new float[2]{3,3};
         // Debug.Log("math test");
         // Debug.Log(string.Join(",", VectorSub(test1, test2)));
         // Debug.Log(string.Join(",", VectorAdd(test1, test2)));
